@@ -22,7 +22,7 @@ program benchmark_dot
 
    call bench%init(7,'Benchmark dot_product','benchmarks/dot/results/dot', 1000)
 
-   do p = 5000_ik,100000_ik, 5000_ik
+   do p = 50000_ik,1000000_ik, 50000_ik
 
       !===============================================================================
       if (allocated(u)) deallocate(u)
@@ -30,84 +30,96 @@ program benchmark_dot
       allocate(u(p))
       allocate(v(p))
       call random_seed(put = seed_array)
+      !===============================================================================
+
+
+      !===============================================================================
       call random_number(u)
       call random_number(v)
-      !===============================================================================
-
-
-      !===============================================================================
       call bench%start_benchmark(1,'dot_product','a = dot_product(u,v)',[p])
+      a = 0._rk
       do nl = 1,bench%nloops
-         u = u + real(nl,rk) ! to prevent compiler from optimizing (loop-invariant)
-         v = v + real(nl,rk) ! to prevent compiler from optimizing (loop-invariant)
-         a = dot_product(u,v)
+         a = a + dot_product(u,v)
       end do
       call bench%stop_benchmark(cmp_gflops)
+      print *, a
       !===============================================================================
 
 
       !===============================================================================
+      call random_number(u)
+      call random_number(v)
       call bench%start_benchmark(2,'m1', "a = dot_product(u,v,'m1')",[p])
+      a = 0._rk
       do nl = 1,bench%nloops
-         u = u + real(nl,rk) ! to prevent compiler from optimizing (loop-invariant)
-         v = v + real(nl,rk) ! to prevent compiler from optimizing (loop-invariant)
-         a = dot_product(u,v,'m1')
+         a = a + dot_product(u,v,'m1')
       end do
       call bench%stop_benchmark(cmp_gflops)
+      print *, a
       !===============================================================================
 
 
       !===============================================================================
-      call bench%start_benchmark(3,'m2', "a = dot_product(u,v,'m2')",[p])
+      call random_number(u)
+      call random_number(v)
+      call bench%start_benchmark(3,'blas', "a = dot_product(u,v,'m2')",[p])
+      a = 0._rk
       do nl = 1,bench%nloops
-         u = u + real(nl,rk) ! to prevent compiler from optimizing (loop-invariant)
-         v = v + real(nl,rk) ! to prevent compiler from optimizing (loop-invariant)
-         a = dot_product(u,v,'m2')
+         a = a + dot_product(u,v,'m2')
       end do
       call bench%stop_benchmark(cmp_gflops)
+      print *, a
       !===============================================================================
 
 
       !===============================================================================
+      call random_number(u)
+      call random_number(v)
       call bench%start_benchmark(4,'m3', "a = dot_product(u,v,'m3')",[p])
+      a = 0._rk
       do nl = 1,bench%nloops
-         u = u + real(nl,rk) ! to prevent compiler from optimizing (loop-invariant)
-         v = v + real(nl,rk) ! to prevent compiler from optimizing (loop-invariant)
-         a = dot_product(u,v,'m3')
+         a = a + dot_product(u,v,'m3')
       end do
       call bench%stop_benchmark(cmp_gflops)
+      print *, a
       !===============================================================================
 
 
       !===============================================================================
+      call random_number(u)
+      call random_number(v)
       call bench%start_benchmark(5,'m4', "a = dot_product(u,v,'m4')",[p])
+      a = 0._rk
       do nl = 1,bench%nloops
-         u = u + real(nl,rk) ! to prevent compiler from optimizing (loop-invariant)
-         v = v + real(nl,rk) ! to prevent compiler from optimizing (loop-invariant)
-         a = dot_product(u,v,'m4')
+         a = a + dot_product(u,v,'m4')
       end do
       call bench%stop_benchmark(cmp_gflops)
+      print *, a
       !===============================================================================
 
       !===============================================================================
+      call random_number(u)
+      call random_number(v)
       call bench%start_benchmark(6,'chunks', "a = fprod(u,v)",[p])
+      a = 0._rk
       do nl = 1,bench%nloops
-         u = u + real(nl,rk) ! to prevent compiler from optimizing (loop-invariant)
-         v = v + real(nl,rk) ! to prevent compiler from optimizing (loop-invariant)
-         a = fprod(u,v)
+         a = a + fprod(u,v)
       end do
       call bench%stop_benchmark(cmp_gflops)
+      print *, a
       !===============================================================================
 
 
       !===============================================================================
+      call random_number(u)
+      call random_number(v)
       call bench%start_benchmark(7,'kahan', "a = fprod_kahan(u,v)",[p])
+      a = 0._rk
       do nl = 1,bench%nloops
-         u = u + real(nl,rk) ! to prevent compiler from optimizing (loop-invariant)
-         v = v + real(nl,rk) ! to prevent compiler from optimizing (loop-invariant)
-         a = fprod_kahan(u,v)
+         a = a + fprod_kahan(u,v)
       end do
       call bench%stop_benchmark(cmp_gflops)
+      print *, a
       !===============================================================================
 
    end do
