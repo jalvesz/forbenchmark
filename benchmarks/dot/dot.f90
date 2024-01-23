@@ -7,22 +7,24 @@ program benchmark_dot
 
    implicit none
 
-   type(benchmark)       :: bench
-   real(rk), allocatable :: u(:)
-   real(rk), allocatable :: v(:)
-   real(rk)              :: a
-   integer(ik)           :: p
-   integer               :: nl
-   integer               :: seed_size
-   integer, allocatable  :: seed_array(:)
+   type(benchmark)          :: bench
+   real(rk), allocatable    :: u(:), v(:)
+   real(rk), volatile       :: a
+   integer(ik)              :: p
+   integer                  :: nl, seed_size, i
+   integer, allocatable     :: seed_array(:)
+   integer(ik), allocatable :: num_elements(:)
 
    call random_seed(size = seed_size)
    allocate(seed_array(seed_size))
    seed_array = 123456789
 
-   call bench%init(7,'Benchmark dot_product','benchmarks/dot/results/dot', 1000)
+   call bench%init(7,'Benchmark dot_product','benchmarks/dot/results/dot', 5000)
 
-   do p = 50000_ik,1000000_ik, 50000_ik
+   num_elements = [500_ik, 1000_ik, 10000_ik, 100000_ik, 1000000_ik]
+
+   do i = 1, size(num_elements)
+      p = num_elements(i)
 
       !===============================================================================
       if (allocated(u)) deallocate(u)
@@ -37,12 +39,10 @@ program benchmark_dot
       call random_number(u)
       call random_number(v)
       call bench%start_benchmark(1,'dot_product','a = dot_product(u,v)',[p])
-      a = 0._rk
       do nl = 1,bench%nloops
-         a = a + dot_product(u,v)
+         a = dot_product(u,v)
       end do
       call bench%stop_benchmark(cmp_gflops)
-      print *, a
       !===============================================================================
 
 
@@ -50,12 +50,10 @@ program benchmark_dot
       call random_number(u)
       call random_number(v)
       call bench%start_benchmark(2,'m1', "a = dot_product(u,v,'m1')",[p])
-      a = 0._rk
       do nl = 1,bench%nloops
-         a = a + dot_product(u,v,'m1')
+         a = dot_product(u,v,'m1')
       end do
       call bench%stop_benchmark(cmp_gflops)
-      print *, a
       !===============================================================================
 
 
@@ -63,12 +61,10 @@ program benchmark_dot
       call random_number(u)
       call random_number(v)
       call bench%start_benchmark(3,'blas', "a = dot_product(u,v,'m2')",[p])
-      a = 0._rk
       do nl = 1,bench%nloops
-         a = a + dot_product(u,v,'m2')
+         a = dot_product(u,v,'m2')
       end do
       call bench%stop_benchmark(cmp_gflops)
-      print *, a
       !===============================================================================
 
 
@@ -76,12 +72,10 @@ program benchmark_dot
       call random_number(u)
       call random_number(v)
       call bench%start_benchmark(4,'m3', "a = dot_product(u,v,'m3')",[p])
-      a = 0._rk
       do nl = 1,bench%nloops
-         a = a + dot_product(u,v,'m3')
+         a = dot_product(u,v,'m3')
       end do
       call bench%stop_benchmark(cmp_gflops)
-      print *, a
       !===============================================================================
 
 
@@ -89,24 +83,21 @@ program benchmark_dot
       call random_number(u)
       call random_number(v)
       call bench%start_benchmark(5,'m4', "a = dot_product(u,v,'m4')",[p])
-      a = 0._rk
       do nl = 1,bench%nloops
-         a = a + dot_product(u,v,'m4')
+         a = dot_product(u,v,'m4')
       end do
       call bench%stop_benchmark(cmp_gflops)
-      print *, a
       !===============================================================================
+
 
       !===============================================================================
       call random_number(u)
       call random_number(v)
       call bench%start_benchmark(6,'chunks', "a = fprod(u,v)",[p])
-      a = 0._rk
       do nl = 1,bench%nloops
-         a = a + fprod(u,v)
+         a = fprod(u,v)
       end do
       call bench%stop_benchmark(cmp_gflops)
-      print *, a
       !===============================================================================
 
 
@@ -114,12 +105,10 @@ program benchmark_dot
       call random_number(u)
       call random_number(v)
       call bench%start_benchmark(7,'kahan', "a = fprod_kahan(u,v)",[p])
-      a = 0._rk
       do nl = 1,bench%nloops
-         a = a + fprod_kahan(u,v)
+         a = fprod_kahan(u,v)
       end do
       call bench%stop_benchmark(cmp_gflops)
-      print *, a
       !===============================================================================
 
    end do
